@@ -70,7 +70,7 @@ fonction afficher_menu
 """
 fonction demander_pseudo():
     pseudo = entrée("Entre ton pseudo :")
-    si pseudo_valide():
+    si pseudo_valide(pseudo):
         retourner pseudo
     sinon:
         afficher("Pseudo non valide")
@@ -87,17 +87,50 @@ fonction creer_equipe():
 """
 fonction demander_perso(equipe):
     liste = afficher_liste_perso_tronquee(equipe)
+    choix = entree("Choix du personnage : ")
+    si choix_valide(choix, liste):
+        retourner liste[entier(choix) - 1]
+    
+    sinon:
+        afficher("Choix non valide")
+        retourner demander_perso(equipe)
     
 """
 
 """
-afficher_liste_perso_tronquee(a_tronquer):
+fonction pseudo_valide(pseudo):
+    si longueur(pseudo) > 40 ou longueur(pseudo) < 3:
+        retourne faux
+    
+    sinon:
+        retourne vrai
+"""
+
+"""
+fonction choix_valide(choix, liste):
+    si choix n'est pas un nombre:
+        retourner faux
+    
+    si choix < 1 ou choix > longueur(liste):
+        retourner faux
+    
+    retourner vrai
+"""
+
+"""
+fonction afficher_liste_perso_tronquee(a_tronquer):
     liste = []
     pour chaque persos en tant que perso:
-        si perso pas dans a_tronquer:
-            afficher_perso_formaté()
+        si perso.nom pas dans nom de a_tronquer:
             liste.ajouter(perso)
+            afficher_perso_formate(perso, longueur(liste))
         else:
             continuer
     retourner liste
+"""
+
+
+"""
+fonction afficher_perso_formate(perso, index):
+    afficher("{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}")
 """
