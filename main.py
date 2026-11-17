@@ -62,9 +62,31 @@ opposants = {
 
 
 """
-fonction afficher_menu
+fonction demarrer_partie():
     pseudo = demander_pseudo()
     equipe = creer_equipe()
+"""
+
+"""
+fonction afficher_menu():
+    afficher("1. Nouvelle partie")
+    afficher("2. Voir les personnages")
+    afficher("3. Quitter")
+    retourner entree("Ton choix :")
+"""
+
+"""
+fonction lancer_jeu():
+    tant que vrai:
+        choix = afficher_menu()
+        si choix == "1":
+            demarrer_partie()
+        sinon si choix == "2":
+            afficher_liste_perso_tronquee([])
+        sinon si choix == "3":
+            retourner   
+        sinon:
+            afficher("Choix invalide")
 """
 
 """
@@ -74,7 +96,7 @@ fonction demander_pseudo():
         retourner pseudo
     sinon:
         afficher("Pseudo non valide")
-        retourner(demander_pseudo)
+        retourner demander_pseudo()
 """
 
 """
@@ -100,10 +122,10 @@ fonction demander_perso(equipe):
 """
 fonction pseudo_valide(pseudo):
     si longueur(pseudo) > 40 ou longueur(pseudo) < 3:
-        retourne faux
+        retourner faux
     
     sinon:
-        retourne vrai
+        retourner vrai
 """
 
 """
