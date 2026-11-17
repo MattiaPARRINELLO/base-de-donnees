@@ -91,12 +91,11 @@ fonction lancer_jeu():
 
 """
 fonction demander_pseudo():
-    pseudo = entrée("Entre ton pseudo :")
-    si pseudo_valide(pseudo):
-        retourner pseudo
-    sinon:
-        afficher("Pseudo non valide")
-        retourner demander_pseudo()
+    tant que vrai:
+        pseudo = entrée("Entre ton pseudo :")
+        si pseudo_valide(pseudo):
+            retourner pseudo
+    afficher("Pseudo non valide")
 """
 
 """
@@ -109,13 +108,11 @@ fonction creer_equipe():
 """
 fonction demander_perso(equipe):
     liste = afficher_liste_perso_tronquee(equipe)
-    choix = entree("Choix du personnage : ")
-    si choix_valide(choix, liste):
-        retourner liste[entier(choix) - 1]
-    
-    sinon:
-        afficher("Choix non valide")
-        retourner demander_perso(equipe)
+    tant que vrai:
+        choix = entree("Choix du personnage : ")
+        si choix_valide(choix, liste):
+            retourner liste[entier(choix) - 1]
+    afficher("Choix non valide")
     
 """
 
