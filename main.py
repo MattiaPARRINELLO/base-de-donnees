@@ -62,14 +62,15 @@ opposants = {
 
 
 """
-fonction demarrer_partie():
-    pseudo = demander_pseudo()
-    equipe = creer_equipe()
-    liste_opposants = tirer_opposant()
-    si combattre(equipe, liste_opposants):
-        afficher("Victoire")
-    sinon: 
-        afficher("Défaite")
+fonction lancer_jeu():
+    tant que vrai:
+        choix = afficher_menu()
+        si choix == "1":
+            demarrer_partie()
+        sinon si choix == "2":
+            afficher_liste_persos(persos_disponibles([]))
+        sinon:
+            retourner   
 """
 
 """
@@ -94,15 +95,14 @@ fonction choix_valide(choix, minimum, maximum):
 """
 
 """
-fonction lancer_jeu():
-    tant que vrai:
-        choix = afficher_menu()
-        si choix == "1":
-            demarrer_partie()
-        sinon si choix == "2":
-            afficher_liste_persos(persos_disponibles([]))
-        sinon:
-            retourner   
+fonction demarrer_partie():
+    pseudo = demander_pseudo()
+    equipe = creer_equipe()
+    liste_opposants = tirer_opposant()
+    si combattre(equipe, liste_opposants):
+        afficher("Victoire")
+    sinon: 
+        afficher("Défaite")
 """
 
 """
@@ -112,6 +112,15 @@ fonction demander_pseudo():
         si pseudo_valide(pseudo):
             retourner pseudo
         afficher("Pseudo non valide")
+"""
+
+"""
+fonction pseudo_valide(pseudo):
+    si longueur(pseudo) > 40 ou longueur(pseudo) < 3:
+        retourner faux
+    
+    sinon:
+        retourner vrai
 """
 
 """
@@ -134,15 +143,6 @@ fonction demander_perso(equipe):
 """
 
 """
-fonction pseudo_valide(pseudo):
-    si longueur(pseudo) > 40 ou longueur(pseudo) < 3:
-        retourner faux
-    
-    sinon:
-        retourner vrai
-"""
-
-"""
 fonction persos_disponibles(a_tronquer):
     liste = []
     pour chaque persos en tant que perso:
@@ -159,21 +159,10 @@ fonction afficher_liste_persos(liste):
         index += 1 
 """
 
-
 """
 fonction afficher_perso_formate(perso, index):
     afficher("{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}")
 """
-
-
-"""
-fonction calculer_degats(attaquant, defenseur):
-    degats = arrondi_inferieur(attaquant['attaque'] - (defenseur['defense'] / 2)) #Limite combat trop long ex. Gérard x Jo (130 tours sans)
-    si degats < 1:
-        retourner 1
-    retourner degats    
-"""
-
 
 """
 fonction tirer_opposant():
@@ -183,20 +172,6 @@ fonction tirer_opposant():
     pour chaque cle dans cles:
         liste.ajouter(copier(opposants[cle]))
     retourner liste
-"""
-
-
-"""
-fonction duel(perso, opposant):
-    tant que perso['hp'] > 0 et opposant['hp'] > 0:
-        opposant['hp'] = opposant['hp'] - calculer_degats(perso, opposant)
-        si opposant['hp'] <= 0:
-            afficher(opposant['nom'], "est vaincu")
-        sinon:
-            perso['hp'] = perso['hp'] - calculer_degats(opposant, perso)
-            si perso['hp'] <= 0:
-                afficher(perso['nom'], "est vaincu")
-    retourner perso['hp'] > 0
 """
 
 """
@@ -212,6 +187,25 @@ fonction combattre(equipe, liste_opposants):
     si i_opposant >= longueur(liste_opposants):
         retourner vrai
     retourner faux
-        
-    
+"""
+
+"""
+fonction duel(perso, opposant):
+    tant que perso['hp'] > 0 et opposant['hp'] > 0:
+        opposant['hp'] = opposant['hp'] - calculer_degats(perso, opposant)
+        si opposant['hp'] <= 0:
+            afficher(opposant['nom'], "est vaincu")
+        sinon:
+            perso['hp'] = perso['hp'] - calculer_degats(opposant, perso)
+            si perso['hp'] <= 0:
+                afficher(perso['nom'], "est vaincu")
+    retourner perso['hp'] > 0
+"""
+
+"""
+fonction calculer_degats(attaquant, defenseur):
+    degats = arrondi_inferieur(attaquant['attaque'] - (defenseur['defense'] / 2)) #Limite combat trop long ex. Gérard x Jo (130 tours sans)
+    si degats < 1:
+        retourner 1
+    retourner degats    
 """
