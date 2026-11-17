@@ -64,25 +64,21 @@ opposants = {
 """
 fonction lancer_jeu():
     tant que vrai:
-        choix = afficher_menu()
-        si choix == "1":
+        choix = demander_choix_menu()
+        si choix == 1:
             demarrer_partie()
-        sinon si choix == "2":
+        sinon si choix == 2:
             afficher_liste_persos(persos_disponibles([]))
         sinon:
             retourner   
 """
 
 """
-fonction afficher_menu():
-    tant que vrai:
-        afficher("1. Nouvelle partie")
-        afficher("2. Voir les personnages")
-        afficher("3. Quitter")
-        choix = entree("Ton choix : ")
-        si choix_valide(choix, 1, 3):
-            retourner choix
-        afficher("Choix invalide")
+fonction demander_choix_menu():
+    afficher("1. Nouvelle partie")
+    afficher("2. Voir les personnages")
+    afficher("3. Quitter")
+    retourner demander_choix(3, "Ton choix : ")
 """
 
 """
@@ -95,11 +91,21 @@ fonction choix_valide(choix, minimum, maximum):
 """
 
 """
+fonction demander_choix(nombre_options, message):
+    tant que vrai:
+        choix = entree(message)
+        si choix_valide(choix, 1, nombre_options):
+            retourner entier(choix)
+        afficher("Choix invalide")
+"""
+
+"""
 fonction demarrer_partie():
     pseudo = demander_pseudo()
     equipe = creer_equipe()
     liste_opposants = tirer_opposant()
-    si combattre(equipe, liste_opposants):
+    victoire = combattre(equipe, liste_opposants) 
+    si victoire:
         afficher("Victoire")
     sinon: 
         afficher("Défaite")
@@ -134,12 +140,8 @@ fonction creer_equipe():
 fonction demander_perso(equipe):
     liste = persos_disponibles(equipe)
     afficher_liste_persos(liste)
-    tant que vrai:
-        choix = entree("Choix du personnage : ")
-        si choix_valide(choix, 1, longueur(liste)):
-            retourner liste[entier(choix) - 1]
-        afficher("Choix non valide")
-    
+    choix = demander_choix(longueur(liste), "Choix du personnage : ")
+    retourner liste[choix - 1]
 """
 
 """
@@ -176,17 +178,20 @@ fonction tirer_opposant():
 
 """
 fonction combattre(equipe, liste_opposants):
-    i_perso = 0
-    i_opposant = 0
-    tant que i_perso < longueur(equipe) et i_opposant < longueur(liste_opposants):
-        afficher(equipe[i_perso]['nom'], "affronte", liste_opposants[i_opposant]['nom'])
-        si duel(equipe[i_perso], liste_opposants[i_opposant]):
-            i_opposant = i_opposant + 1 
+    index_perso = 0
+    index_opposant = 0
+    tant que vrai:
+        si index_perso >= longueur(equipe):
+            retourner faux
+        si index_opposant >= longueur(liste_opposants):
+            retourner vrai
+        perso = equipe[index_perso]
+        opposant = liste_opposants[index_opposant]
+        afficher(perso['nom'], "affronte", opposant['nom'])
+        si duel(perso, opposant):
+            index_opposant = index_opposant + 1
         sinon:
-            i_perso = i_perso + 1
-    si i_opposant >= longueur(liste_opposants):
-        retourner vrai
-    retourner faux
+            index_perso = index_perso + 1
 """
 
 """
