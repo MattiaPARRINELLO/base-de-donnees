@@ -95,7 +95,7 @@ fonction demander_pseudo():
         pseudo = entrée("Entre ton pseudo :")
         si pseudo_valide(pseudo):
             retourner pseudo
-    afficher("Pseudo non valide")
+        afficher("Pseudo non valide")
 """
 
 """
@@ -112,7 +112,7 @@ fonction demander_perso(equipe):
         choix = entree("Choix du personnage : ")
         si choix_valide(choix, liste):
             retourner liste[entier(choix) - 1]
-    afficher("Choix non valide")
+        afficher("Choix non valide")
     
 """
 
