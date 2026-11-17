@@ -73,6 +73,18 @@ fonction lancer_jeu():
             retourner   
 """
 
+
+def lancer_jeu():
+    while True:
+        choix = demander_choix_menu()
+        if choix == 1:
+            demarrer_partie()
+        elif choix == 2:
+            afficher_liste_persos(persos_disponibles([]))
+        else:
+            return
+
+
 """
 fonction demander_choix_menu():
     afficher("1. Nouvelle partie")
@@ -81,14 +93,33 @@ fonction demander_choix_menu():
     retourner demander_choix(3, "Ton choix : ")
 """
 
+
+def demander_choix_menu():
+    print("1. Nouvelle partie")
+    print("2. Voir les personnages")
+    print("3. Quitter")
+    return demander_choix(3, "Ton choix : ")
+
+
 """
 fonction choix_valide(choix, minimum, maximum):
-    si choix est un nombre:
-        choix = entier(choix)
-        si minimum <= choix et choix <= maximum:
-            retourner vrai
-    retourner faux
+    si choix n'est pas un nombre:
+        retourner faux
+    choix = entier(choix)
+    si minimum > choix ou choix > maximum:
+            retourner faux
+    retourner vrai
 """
+
+
+def choix_valide(choix, minimum, maximum):
+    if not choix.isdigit():
+        return False
+    if minimum > choix or choix > maximum:  # noqa: SIM103
+        return False
+
+    return True
+
 
 """
 fonction demander_choix(nombre_options, message):
@@ -98,6 +129,15 @@ fonction demander_choix(nombre_options, message):
             retourner entier(choix)
         afficher("Choix invalide")
 """
+
+
+def demander_choix(nombre_options, message):
+    while True:
+        choix = input(message)
+        if choix_valide(choix, 1, nombre_options):
+            return int(choix)
+        print("Choix invalide")
+
 
 """
 fonction demarrer_partie():
@@ -111,6 +151,18 @@ fonction demarrer_partie():
         afficher("Défaite")
 """
 
+
+def demarrer_partie():
+    pseudo = demander_pseudo()
+    equipe = creer_equipe()
+    liste_opposants = tirer_opposant()
+    victoire = combattre(equipe, liste_opposants)
+    if victoire:
+        print("Victoire")
+    else:
+        print("Défaite")
+
+
 """
 fonction demander_pseudo():
     tant que vrai:
@@ -119,6 +171,15 @@ fonction demander_pseudo():
             retourner pseudo
         afficher("Pseudo non valide")
 """
+
+
+def demander_pseudo():
+    while True:
+        pseudo = input("Entre ton pseudo : ")
+        if pseudo_valide(pseudo):
+            return pseudo
+        print("Pseudo non valide")
+
 
 """
 fonction pseudo_valide(pseudo):
@@ -129,12 +190,27 @@ fonction pseudo_valide(pseudo):
         retourner vrai
 """
 
+
+def pseudo_valide(pseudo):
+    if len(pseudo) > 40 or len(pseudo) < 3:  # noqa: SIM103
+        return False
+    else:
+        return True
+
+
 """
 fonction creer_equipe():
     equipe = []
     while longueur(equipe) < 3:
         equipe.ajouter(demander_perso(equipe))
 """
+
+
+def creer_equipe():
+    equipe = []
+    while len(equipe) < 3:
+        equipe.append(demander_perso(equipe))
+
 
 """
 fonction demander_perso(equipe):
@@ -144,6 +220,14 @@ fonction demander_perso(equipe):
     retourner liste[choix - 1]
 """
 
+
+def demander_perso(equipe):
+    liste = perso_disponible(equipe)
+    afficher_liste_persos(liste)
+    choix = demander_choix(longueur(liste), "Choix du personnage : ")
+    return liste[choix - 1]
+
+
 """
 fonction persos_disponibles(a_tronquer):
     liste = []
@@ -152,6 +236,15 @@ fonction persos_disponibles(a_tronquer):
             liste.ajouter(perso)
     retourner liste
 """
+
+
+def persos_disponibles(a_tronquer):
+    liste = []
+    for perso in persos:
+        if perso["nom"] not in a_tronquer["nom"]:
+            liste.append(perso)
+    return liste
+
 
 """
 fonction afficher_liste_persos(liste):
