@@ -118,9 +118,8 @@ fonction choix_valide(choix, minimum, maximum):
 def choix_valide(choix, minimum, maximum):
     if not choix.isdigit():
         return False
-    if minimum > choix or choix > maximum:  # noqa: SIM103
+    if not (minimum <= int(choix) and int(choix) <= maximum):
         return False
-
     return True
 
 
@@ -213,6 +212,7 @@ def creer_equipe():
     equipe = []
     while len(equipe) < 3:
         equipe.append(demander_perso(equipe))
+    return equipe
 
 
 """
