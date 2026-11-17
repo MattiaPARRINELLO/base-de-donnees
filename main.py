@@ -1,3 +1,6 @@
+import math
+
+
 persos = {
     "gerard": {
         "nom": "Gérard",
@@ -222,9 +225,9 @@ fonction demander_perso(equipe):
 
 
 def demander_perso(equipe):
-    liste = perso_disponible(equipe)
+    liste = persos_disponibles(equipe)
     afficher_liste_persos(liste)
-    choix = demander_choix(longueur(liste), "Choix du personnage : ")
+    choix = demander_choix(len(liste), "Choix du personnage : ")
     return liste[choix - 1]
 
 
@@ -254,10 +257,25 @@ fonction afficher_liste_persos(liste):
         index += 1 
 """
 
+
+def afficher_liste_persos(liste):
+    index = 1
+    for perso in liste:
+        afficher_perso_formate(perso, index)
+        index += 1
+
+
 """
 fonction afficher_perso_formate(perso, index):
     afficher("{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}")
 """
+
+
+def afficher_perso_formate(perso, index):
+    print(
+        f"{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}"
+    )
+
 
 """
 fonction tirer_opposant():
@@ -268,6 +286,15 @@ fonction tirer_opposant():
         liste.ajouter(copier(opposants[cle]))
     retourner liste
 """
+
+
+def tirer_opposant():
+    cles = opposants
+    # melanger(cle)
+    liste = []
+    for cle in cles:
+        liste.append(opposants[cle]).copy()
+
 
 """
 fonction combattre(equipe, liste_opposants):
@@ -287,6 +314,17 @@ fonction combattre(equipe, liste_opposants):
             index_perso = index_perso + 1
 """
 
+
+def combattre(equipe, liste_opposants):
+    index_perso = 0
+    index_opposant = 0
+    while True:
+        if index_perso >= len(equipe):
+            return False
+        if index_opposant >= len(liste_opposants):
+            return True
+
+
 """
 fonction duel(perso, opposant):
     tant que perso['hp'] > 0 et opposant['hp'] > 0:
@@ -300,6 +338,19 @@ fonction duel(perso, opposant):
     retourner perso['hp'] > 0
 """
 
+
+def duel(perso, opposant):
+    while perso["hp"] > 0 and opposant["hp"] > 0:
+        opposant["hp"] -= calculer_degats(perso, opposant)
+        if opposant["hp"] <= 0:
+            print(opposant["nom"], "est vaincu")
+        else:
+            perso["hp"] -= calculer_degats(opposant, perso)
+            if perso["hp"] <= 0:
+                print(perso["nom"], "est vaincu")
+    return perso["hp"] > 0
+
+
 """
 fonction calculer_degats(attaquant, defenseur):
     degats = arrondi_inferieur(attaquant['attaque'] - (defenseur['defense'] / 2)) #Limite combat trop long ex. Gérard x Jo (130 tours sans)
@@ -307,3 +358,13 @@ fonction calculer_degats(attaquant, defenseur):
         retourner 1
     retourner degats    
 """
+
+
+def calculer_degats(attaquant, defenseur):
+    # arrondi_inferieur = math.floor
+    degats = math.floor(
+        attaquant["attaque"] - defenseur["defense"] / 2
+    )  # Limite combat trop long ex. Gérard x Jo (130 tours sans)
+    if degats < 1:
+        return 1
+    return degats
