@@ -153,3 +153,33 @@ fonction afficher_liste_perso_tronquee(a_tronquer):
 fonction afficher_perso_formate(perso, index):
     afficher("{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}")
 """
+
+
+"""
+fonction calculer_degats(attaquant, defenseur):
+    degats = arrondi_inferieur(attaquant.attaque - (defenseur.defense / 2)) #Limite combat trop long ex. Gérard x Jo (130 tours sans)
+    si degats < 1:
+        retourner 1
+    retourner degats    
+"""
+
+
+"""
+fonction tirer_opposant():
+    cles = liste des clé de opposants
+    melanger(cles)
+    liste = []
+    pour chaque cle dans cles:
+        liste.ajouter(copier(opposants[cle]))
+    retourner liste
+"""
+
+"""
+fonction combattre(equipe, liste_opposants):
+    i_perso = 0
+    i_opposant = 0
+    tant que i_persso < longueur(equipe) et i_opposant < longueur(liste_opposants):
+        perso = equipe[i_perso]
+        opposant = liste_opposants[i_opposant]
+        afficher(perso['hp'] > 0 et opposant['hp'] > 0):
+"""
