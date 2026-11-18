@@ -444,7 +444,7 @@ def tour_de_combat(persos_restants, opposants_restants):
     if duel(perso, opposant):
         opposants_restants.pop(0)
     else:
-        opposants_restants.pop(0)
+        persos_restants.pop(0)
 
 
 """
@@ -455,8 +455,8 @@ fonction attaquer(attaquant, defenseur):
 """
 
 
-def attaquer(attanquant, defenseur):
-    defenseur["hp"] -= calculer_degats(attanquant, defenseur)
+def attaquer(attaquant, defenseur):
+    defenseur["hp"] -= calculer_degats(attaquant, defenseur)
     if defenseur["hp"] <= 0:
         print(f"{defenseur['nom']} est vaincu")
 
@@ -502,4 +502,5 @@ def calculer_degats(attaquant, defenseur):
     return degats
 
 
-lancer_jeu()
+if __name__ == "__main__":
+    lancer_jeu()
