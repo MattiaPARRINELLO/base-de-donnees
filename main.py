@@ -315,7 +315,7 @@ def demander_perso(equipe):
     liste = persos_disponibles(equipe)
     afficher_liste_persos(liste)
     choix = demander_choix(len(liste), "Choix du personnage : ")
-    return liste[choix - 1]
+    return dict(liste[choix - 1])
 
 
 """
