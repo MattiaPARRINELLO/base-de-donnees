@@ -1,6 +1,6 @@
 import math
 import random
-from string import printable
+import bdd
 
 persos = {
     "gerard": {
@@ -93,16 +93,18 @@ def lancer_jeu():
 fonction demander_choix_menu():
     afficher("1. Nouvelle partie")
     afficher("2. Voir les personnages")
-    afficher("3. Quitter")
-    retourner demander_choix(3, "Ton choix : ")
+    afficher("3. Voir les scores)
+    afficher("4. Quitter")
+    retourner demander_choix(4, "Ton choix : ")
 """
 
 
 def demander_choix_menu():
     print("1. Nouvelle partie")
     print("2. Voir les personnages")
-    print("3. Quitter")
-    return demander_choix(3, "Ton choix : ")
+    print("3. Voir les scores")
+    print("4. Quitter")
+    return demander_choix(4, "Ton choix : ")
 
 
 """
