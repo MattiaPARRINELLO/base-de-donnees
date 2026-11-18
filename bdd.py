@@ -1,3 +1,8 @@
+"""
+Accès à la base MongoDB des scores.
+Aucune fonction ici n'affiche quoi que ce soit : main.py s'en charge.
+"""
+
 from datetime import datetime
 
 from pymongo import MongoClient

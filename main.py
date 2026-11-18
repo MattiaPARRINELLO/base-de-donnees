@@ -1,3 +1,8 @@
+"""
+Jeu de combat au tour par tour, joué en console.
+Les scores sont enregistrés dans MongoDB via le module bdd.
+"""
+
 import math
 import random
 
@@ -67,7 +72,7 @@ opposants = {
 
 
 TAILLE_EQUIPE = 3
-NB_SCORE_AFFICHE = 10
+NOMBRE_SCORES_AFFICHES = 10
 
 
 """
@@ -366,8 +371,8 @@ def afficher_perso_formate(perso, index):
 
 
 """
-fonction afficher_score():
-    scores = lire_scores(NB_SCORE_AFFICHE)
+fonction afficher_scores():
+    scores = lire_scores(NOMBRE_SCORES_AFFICHES)
     si longueur(scores) == 0:
         afficher("Aucun score enregistré")
         retourner
@@ -375,12 +380,11 @@ fonction afficher_score():
     pour chaque score dans scores:
         afficher(f"{index}. {score['pseudo']} - {score['opposants_vaincus']} vaincus - {score['date_partie']}")
         index += 1
-
 """
 
 
 def afficher_scores():
-    scores = bdd.lire_scores(NB_SCORE_AFFICHE)
+    scores = bdd.lire_scores(NOMBRE_SCORES_AFFICHES)
     if len(scores) == 0:
         print("Aucun score enregistré")
         return
@@ -427,7 +431,6 @@ def tirer_opposant():
     liste = []
     for cle in cles:
         liste.append(dict(opposants[cle]))
-
     return liste
 
 
