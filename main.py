@@ -74,16 +74,14 @@ NB_SCORE_AFFICHE = 10
 
 """
 fonction lancer_jeu():
+    initialiser base
     tant que vrai:
+        afficher le meilleur score
         choix = demander_choix_menu()
-        si choix == 1:
-            demarrer_partie()
-        sinon si choix == 2:
-            afficher_liste_persos(persos_disponibles([]))
-        sinon si choix == 3:
-            afficher_scores()
-        sinon:
-            retourner   
+        action = options du menu[choix]['action']
+        si action est nulle:
+            retourner
+        action()
 """
 
 
@@ -100,11 +98,9 @@ def lancer_jeu():
 
 """
 fonction demander_choix_menu():
-    afficher("1. Nouvelle partie")
-    afficher("2. Voir les personnages")
-    afficher("3. Voir les scores)
-    afficher("4. Quitter")
-    retourner demander_choix(4, "Ton choix : ")
+    options = options_menu()
+    afficher_options_menu(options)
+    retourner demander_choix(longueur(options), "Ton choix : ")
 """
 
 
@@ -112,6 +108,16 @@ def demander_choix_menu():
     options = options_menu()
     afficher_options_menu(options)
     return demander_choix(len(options), "Ton choix : ")
+
+
+"""
+fonction afficher_personnages():
+    afficher la liste de tous les personnages disponibles
+"""
+
+
+def afficher_personnages():
+    afficher_liste_persos(persos_disponibles([]))
 
 
 """
@@ -123,7 +129,7 @@ fonction options_menu():
 def options_menu():
     return {
         1: {"nom": "Nouvelle partie", "action": demarrer_partie},
-        2: {"nom": "Voir les personnages", "action": afficher_liste_persos},
+        2: {"nom": "Voir les personnages", "action": afficher_personnages},
         3: {"nom": "Voir les scores", "action": afficher_scores},
         4: {"nom": "Quitter", "action": None},
     }
@@ -131,8 +137,8 @@ def options_menu():
 
 """
 fonction afficher_options_menu(options):
-    pour chaque numero et options dans options
-        afficher(numero, ". " option['nom'])
+    pour chaque numero, option dans options:
+        afficher(numero, ".", option['nom'])
 """
 
 
