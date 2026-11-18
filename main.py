@@ -1,5 +1,6 @@
 import math
-
+import random
+from string import printable
 
 persos = {
     "gerard": {
@@ -242,9 +243,12 @@ fonction persos_disponibles(a_tronquer):
 
 
 def persos_disponibles(a_tronquer):
+    nom_pris = []
+    for perso in a_tronquer:
+        nom_pris.append(perso["nom"])
     liste = []
-    for perso in persos:
-        if perso["nom"] not in a_tronquer["nom"]:
+    for perso in persos.values():
+        if perso["nom"] not in nom_pris:
             liste.append(perso)
     return liste
 
@@ -289,11 +293,13 @@ fonction tirer_opposant():
 
 
 def tirer_opposant():
-    cles = opposants
-    # melanger(cle)
+    cles = list(opposants.keys())
+    random.shuffle(cles)
     liste = []
     for cle in cles:
-        liste.append(opposants[cle]).copy()
+        liste.append(dict(opposants[cle]))
+
+    return liste
 
 
 """
@@ -319,6 +325,13 @@ def combattre(equipe, liste_opposants):
     index_perso = 0
     index_opposant = 0
     while True:
+        perso = equipe[index_perso]
+        opposant = liste_opposants[index_opposant]
+        print(f"{perso['nom']} affronte {opposant['nom']}")
+        if duel(perso, opposant):
+            index_opposant += 1
+        else:
+            index_perso += 1
         if index_perso >= len(equipe):
             return False
         if index_opposant >= len(liste_opposants):
@@ -368,3 +381,6 @@ def calculer_degats(attaquant, defenseur):
     if degats < 1:
         return 1
     return degats
+
+
+lancer_jeu()
