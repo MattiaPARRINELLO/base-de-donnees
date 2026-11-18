@@ -420,7 +420,7 @@ def combattre(equipe, liste_opposants):
     opposants_restants = list(liste_opposants)
     while combat_en_cours(persos_restants, opposants_restants):
         tour_de_combat(persos_restants, opposants_restants)
-    if len(opposants_restants) == 0:  # noqa: SIM103
+    if tous_vaincu(opposants_restants):  # noqa: SIM103
         return True
     return False
 
@@ -436,9 +436,9 @@ fonction combat_en_cours(persos_restants, opposants_restants):
 
 
 def combat_en_cours(persos_restants, opposants_restants):
-    if len(persos_restants) == 0:
+    if tous_vaincu(persos_restants):
         return False
-    if len(opposants_restants) == 0:  # noqa: SIM103
+    if tous_vaincu(opposants_restants):  # noqa: SIM103
         return False
     return True
 
@@ -529,6 +529,20 @@ fonction est_vivant(perso):
 
 def est_vivant(perso):
     if perso["hp"] > 0:  # noqa: SIM103
+        return True
+    return False
+
+
+"""
+fonction tous_vaincu(restants):
+    si longueur restants == 0:
+        retourner Vrai
+    retourner Faux
+"""
+
+
+def tous_vaincu(restants):
+    if len(restants) == 0:  # noqa: SIM103
         return True
     return False
 
