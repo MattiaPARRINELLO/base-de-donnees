@@ -468,14 +468,14 @@ def tour_de_combat(persos_restants, opposants_restants):
 """
 fonction attaquer(attaquant, defenseur):
     defenseur['hp'] =  defenseur['hp'] - calculer_degats(attaquant, defenseur)
-    si defenseur['hp'] <= 0:
+    si le defenseur n'est pas vivant:
         afficher(defenseur['nom'], "est vaincu")
 """
 
 
 def attaquer(attaquant, defenseur):
     defenseur["hp"] -= calculer_degats(attaquant, defenseur)
-    if est_vivant(defenseur):
+    if not est_vivant(defenseur):
         print(f"{defenseur['nom']} est vaincu")
 
 
