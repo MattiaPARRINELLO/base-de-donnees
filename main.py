@@ -1,6 +1,8 @@
 import math
 import random
 
+from click import option
+
 import bdd
 
 persos = {
@@ -69,6 +71,7 @@ opposants = {
 TAILLE_EQUIPE = 3
 NB_SCORE_AFFICHE = 10
 
+
 """
 fonction lancer_jeu():
     tant que vrai:
@@ -89,14 +92,10 @@ def lancer_jeu():
     while True:
         afficher_meilleur_score()
         choix = demander_choix_menu()
-        if choix == 1:
-            demarrer_partie()
-        elif choix == 2:
-            afficher_liste_persos(persos_disponibles([]))
-        elif choix == 3:
-            afficher_scores()
-        else:
+        action = options_menu()[choix]["action"]
+        if action is None:
             return
+        action()
 
 
 """
@@ -110,11 +109,36 @@ fonction demander_choix_menu():
 
 
 def demander_choix_menu():
-    print("1. Nouvelle partie")
-    print("2. Voir les personnages")
-    print("3. Voir les scores")
-    print("4. Quitter")
-    return demander_choix(4, "Ton choix : ")
+    options = options_menu()
+    afficher_options_menu(options)
+    return demander_choix(len(options), "Ton choix : ")
+
+
+"""
+fonction options_menu():
+    retourner dict options, numéro -> nom & action
+"""
+
+
+def options_menu():
+    return {
+        1: {"nom": "Nouvelle partie", "action": demarrer_partie},
+        2: {"nom": "Voir les personnages", "action": afficher_liste_persos},
+        3: {"nom": "Voir les scores", "action": afficher_scores},
+        4: {"nom": "Quitter", "action": None},
+    }
+
+
+"""
+fonction afficher_options_menu(options):
+    pour chaque numero et options dans options
+        afficher(numero, ". " option['nom'])
+"""
+
+
+def afficher_options_menu(options):
+    for numero, option in options.items():
+        print(f"{numero}. {option['nom']}")
 
 
 """
