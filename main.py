@@ -1,5 +1,6 @@
 import math
 import random
+
 import bdd
 
 persos = {
@@ -64,6 +65,8 @@ opposants = {
     },
 }
 
+
+TAILLE_EQUIPE = 3
 
 """
 fonction lancer_jeu():
@@ -242,16 +245,30 @@ def pseudo_valide(pseudo):
 """
 fonction creer_equipe():
     equipe = []
-    while longueur(equipe) < 3:
+    while equipe_complete(equipe):
         equipe.ajouter(demander_perso(equipe))
 """
 
 
 def creer_equipe():
     equipe = []
-    while len(equipe) < 3:
+    while not equipe_complete(equipe):
         equipe.append(demander_perso(equipe))
     return equipe
+
+
+"""
+fonction equipe_complete(equipe):
+    si longueur equipe >= TAILLE EQUIPE:
+        return True
+    return False
+"""
+
+
+def equipe_complete(equipe):
+    if len(equipe) >= TAILLE_EQUIPE:  # noqa: SIM103
+        return True
+    return False
 
 
 """
@@ -367,7 +384,7 @@ def afficher_meilleur_score():
 """
 fonction tirer_opposant():
     cles = liste des clé de opposants
-    melanger(cles)
+    mélanger(cles)
     liste = []
     pour chaque cle dans cles:
         liste.ajouter(copier(opposants[cle]))
@@ -493,7 +510,6 @@ fonction calculer_degats(attaquant, defenseur):
 
 
 def calculer_degats(attaquant, defenseur):
-    # arrondi_inferieur = math.floor
     degats = math.floor(
         attaquant["attaque"] - defenseur["defense"] / 2
     )  # Limite combat trop long ex. Gérard x Jo (130 tours sans)
