@@ -168,7 +168,7 @@ fonction compter_vaincus(liste_opposants):
 def compter_vaincus(liste_opposants):
     vaincus = 0
     for opposant in liste_opposants:
-        if opposant["hp"] <= 0:
+        if not est_vivant(opposant):
             vaincus += 1
     return vaincus
 
@@ -475,7 +475,7 @@ fonction attaquer(attaquant, defenseur):
 
 def attaquer(attaquant, defenseur):
     defenseur["hp"] -= calculer_degats(attaquant, defenseur)
-    if defenseur["hp"] <= 0:
+    if est_vivant(defenseur):
         print(f"{defenseur['nom']} est vaincu")
 
 
@@ -494,11 +494,11 @@ fonction duel(perso, opposant):
 
 
 def duel(perso, opposant):
-    while perso["hp"] > 0 and opposant["hp"] > 0:
+    while est_vivant(perso) and est_vivant(opposant):
         attaquer(perso, opposant)
-        if opposant["hp"] > 0:
+        if est_vivant(opposant):
             attaquer(opposant, perso)
-    return perso["hp"] > 0
+    return est_vivant(perso)
 
 
 """
@@ -517,6 +517,20 @@ def calculer_degats(attaquant, defenseur):
     if degats < 1:
         return 1
     return degats
+
+
+"""
+fonction est_vivant(perso):
+    si perso['hp'] > 0:
+        retourner Vrai 
+    retourner Faux
+"""
+
+
+def est_vivant(perso):
+    if perso["hp"] > 0:  # noqa: SIM103
+        return True
+    return False
 
 
 if __name__ == "__main__":
