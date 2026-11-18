@@ -387,38 +387,78 @@ def tirer_opposant():
 
 """
 fonction combattre(equipe, liste_opposants):
-    index_perso = 0
-    index_opposant = 0
-    tant que vrai:
-        si index_perso >= longueur(equipe):
-            retourner faux
-        si index_opposant >= longueur(liste_opposants):
-            retourner vrai
-        perso = equipe[index_perso]
-        opposant = liste_opposants[index_opposant]
-        afficher(perso['nom'], "affronte", opposant['nom'])
-        si duel(perso, opposant):
-            index_opposant = index_opposant + 1
-        sinon:
-            index_perso = index_perso + 1
+    persos_restants = copie de equipe
+    opposants_restants = copie de liste_opposants
+    tant combat_en_cours(persos_restants, opposants_restants):
+        tour_de_combat(persos_restant, opposants_restants)
+    si opposant_restant est vide:
+        retourner vrai
+    retourner faux
 """
 
 
 def combattre(equipe, liste_opposants):
-    index_perso = 0
-    index_opposant = 0
-    while True:
-        perso = equipe[index_perso]
-        opposant = liste_opposants[index_opposant]
-        print(f"{perso['nom']} affronte {opposant['nom']}")
-        if duel(perso, opposant):
-            index_opposant += 1
-        else:
-            index_perso += 1
-        if index_perso >= len(equipe):
-            return False
-        if index_opposant >= len(liste_opposants):
-            return True
+    persos_restants = list(equipe)
+    opposants_restants = list(liste_opposants)
+    while combat_en_cours(persos_restants, opposants_restants):
+        tour_de_combat(persos_restants, opposants_restants)
+    if len(opposants_restants) == 0:  # noqa: SIM103
+        return True
+    return False
+
+
+"""
+fonction combat_en_cours(persos_restants, opposants_restants):
+    si persos_restants est vide:
+        retourner faux
+    si opposants_restants est vide:
+        retourner faux
+    retourner vrai
+"""
+
+
+def combat_en_cours(persos_restants, opposants_restants):
+    if len(persos_restants) == 0:
+        return False
+    if len(opposants_restants) == 0:  # noqa: SIM103
+        return False
+    return True
+
+
+"""
+fonction tour_de_combat(persos_restants, opposants_restants):
+    perso = persos_restants[0]
+    opposant = opposant_restants[0]
+    afficher(perso['nom'], affronte, opposant['nom'])
+    si duel(perso, opposant):
+        retirer le premier de opposant_restants
+    sinon
+        retirer le premier de persos_restants
+"""
+
+
+def tour_de_combat(persos_restants, opposants_restants):
+    perso = persos_restants[0]
+    opposant = opposants_restants[0]
+    print(f"{perso['nom']} affronte {opposant['nom']}")
+    if duel(perso, opposant):
+        opposants_restants.pop(0)
+    else:
+        opposants_restants.pop(0)
+
+
+"""
+fonction attaquer(attaquant, defenseur):
+    defenseur['hp'] =  defenseur['hp'] - calculer_degats(attaquant, defenseur)
+    si defenseur['hp'] <= 0:
+        afficher(defenseur['nom'], "est vaincu")
+"""
+
+
+def attaquer(attanquant, defenseur):
+    defenseur["hp"] -= calculer_degats(attanquant, defenseur)
+    if defenseur["hp"] <= 0:
+        print(f"{defenseur['nom']} est vaincu")
 
 
 """
@@ -437,13 +477,9 @@ fonction duel(perso, opposant):
 
 def duel(perso, opposant):
     while perso["hp"] > 0 and opposant["hp"] > 0:
-        opposant["hp"] -= calculer_degats(perso, opposant)
-        if opposant["hp"] <= 0:
-            print(opposant["nom"], "est vaincu")
-        else:
-            perso["hp"] -= calculer_degats(opposant, perso)
-            if perso["hp"] <= 0:
-                print(perso["nom"], "est vaincu")
+        attaquer(perso, opposant)
+        if opposant["hp"] > 0:
+            attaquer(opposant, perso)
     return perso["hp"] > 0
 
 
