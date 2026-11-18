@@ -73,18 +73,23 @@ fonction lancer_jeu():
             demarrer_partie()
         sinon si choix == 2:
             afficher_liste_persos(persos_disponibles([]))
+        sinon si choix == 3:
+            afficher_scores()
         sinon:
             retourner   
 """
 
 
 def lancer_jeu():
+    bdd.initialiser_base()
     while True:
         choix = demander_choix_menu()
         if choix == 1:
             demarrer_partie()
         elif choix == 2:
             afficher_liste_persos(persos_disponibles([]))
+        elif choix == 3:
+            afficher_scores()
         else:
             return
 
@@ -154,6 +159,12 @@ fonction demarrer_partie():
         afficher("Victoire")
     sinon: 
         afficher("Défaite")
+    vaincus = 0
+    pour chaque opposant dans liste_opposants:
+        si opposant['hp'] <= 0:
+            vaincus += 1
+    enregistrer score dans la base de données
+    afficher(f"Score enregistré : {vaincus} opposant(s) vaincu(s)")
 """
 
 
@@ -166,6 +177,12 @@ def demarrer_partie():
         print("Victoire")
     else:
         print("Défaite")
+    vaincus = 0
+    for opposant in liste_opposants:
+        if opposant["hp"] <= 0:
+            vaincus += 1
+    bdd.enregistrer_score(pseudo, victoire, vaincus)
+    print(f"Score enregistré : {vaincus} opposant(s) vaincu(s)")
 
 
 """
@@ -281,6 +298,33 @@ def afficher_perso_formate(perso, index):
     print(
         f"{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}"
     )
+
+
+"""
+fonction afficher_score():
+    scores = lire_scores(10)
+    si longueur(scores) == 0:
+        afficher("Aucun score enregistré")
+        retourner
+    index = 1
+    pour chaque score dans scores:
+        afficher(f"{index}. {score['pseudo']} - {score['opposants_vaincus']} vaincus - {score['date_partie']}")
+        index += 1
+
+"""
+
+
+def afficher_scores():
+    scores = bdd.lire_scores(10)
+    if len(scores) == 0:
+        print("Aucun score enregistré")
+        return
+    index = 1
+    for score in scores:
+        print(
+            f"{index}. {score['pseudo']} - {score['opposants_vaincus']} vaincus - {score['date_partie']:%d/%m/%Y %H:%M:%S}"
+        )
+        index += 1
 
 
 """
