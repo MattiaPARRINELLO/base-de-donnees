@@ -1,8 +1,6 @@
 import math
 import random
 
-from click import option
-
 import bdd
 
 persos = {
