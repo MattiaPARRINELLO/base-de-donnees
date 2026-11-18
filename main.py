@@ -67,6 +67,7 @@ opposants = {
 
 
 TAILLE_EQUIPE = 3
+NB_SCORE_AFFICHE = 10
 
 """
 fonction lancer_jeu():
@@ -338,7 +339,7 @@ def afficher_perso_formate(perso, index):
 
 """
 fonction afficher_score():
-    scores = lire_scores(10)
+    scores = lire_scores(NB_SCORE_AFFICHE)
     si longueur(scores) == 0:
         afficher("Aucun score enregistré")
         retourner
@@ -351,7 +352,7 @@ fonction afficher_score():
 
 
 def afficher_scores():
-    scores = bdd.lire_scores(10)
+    scores = bdd.lire_scores(NB_SCORE_AFFICHE)
     if len(scores) == 0:
         print("Aucun score enregistré")
         return
