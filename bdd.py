@@ -1,5 +1,6 @@
-from pymongo import MongoClient
 from datetime import datetime
+
+from pymongo import MongoClient
 
 URI = "mongodb://localhost:27017"
 BASE = "arene"
