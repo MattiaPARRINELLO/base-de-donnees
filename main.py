@@ -83,6 +83,7 @@ fonction lancer_jeu():
 def lancer_jeu():
     bdd.initialiser_base()
     while True:
+        afficher_meilleur_score()
         choix = demander_choix_menu()
         if choix == 1:
             demarrer_partie()
@@ -126,7 +127,8 @@ fonction choix_valide(choix, minimum, maximum):
 def choix_valide(choix, minimum, maximum):
     if not choix.isdigit():
         return False
-    if not (minimum <= int(choix) and int(choix) <= maximum):
+    choix = int(choix)
+    if minimum > choix or choix > maximum:  # noqa: SIM103
         return False
     return True
 
@@ -147,6 +149,24 @@ def demander_choix(nombre_options, message):
         if choix_valide(choix, 1, nombre_options):
             return int(choix)
         print("Choix invalide")
+
+
+"""
+fonction compter_vaincus(liste_opposants):
+    vaincus = 0
+    pour chaque opposant dans liste_opposants:
+        si opposant['hp'] <= 0:
+            vaincus += 1
+    retourner vaincus
+"""
+
+
+def compter_vaincus(liste_opposants):
+    vaincus = 0
+    for opposant in liste_opposants:
+        if opposant["hp"] <= 0:
+            vaincus += 1
+    return vaincus
 
 
 """
@@ -177,10 +197,7 @@ def demarrer_partie():
         print("Victoire")
     else:
         print("Défaite")
-    vaincus = 0
-    for opposant in liste_opposants:
-        if opposant["hp"] <= 0:
-            vaincus += 1
+    vaincus = compter_vaincus(liste_opposants)
     bdd.enregistrer_score(pseudo, victoire, vaincus)
     print(f"Score enregistré : {vaincus} opposant(s) vaincu(s)")
 
@@ -197,7 +214,7 @@ fonction demander_pseudo():
 
 def demander_pseudo():
     while True:
-        pseudo = input("Entre ton pseudo : ")
+        pseudo = input("Entre ton pseudo : ").strip()
         if pseudo_valide(pseudo):
             return pseudo
         print("Pseudo non valide")
@@ -214,7 +231,9 @@ fonction pseudo_valide(pseudo):
 
 
 def pseudo_valide(pseudo):
-    if len(pseudo) > 40 or len(pseudo) < 3:  # noqa: SIM103
+    if len(pseudo) > 40:
+        return False
+    if len(pseudo) < 3:  # noqa: SIM103
         return False
     else:
         return True
@@ -325,6 +344,24 @@ def afficher_scores():
             f"{index}. {score['pseudo']} - {score['opposants_vaincus']} vaincus - {score['date_partie']:%d/%m/%Y %H:%M:%S}"
         )
         index += 1
+
+
+"""
+fonction afficher_meilleur_score():
+    score = lire_meilleur_score()
+    si score est nul:
+        afficher("Aucun score enregistré")
+        retourner
+    afficher("Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
+"""
+
+
+def afficher_meilleur_score():
+    score = bdd.lire_meilleur_score()
+    if score is None:
+        print("Aucun score enregistré")
+        return
+    print(f"Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
 
 
 """
