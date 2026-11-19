@@ -1,7 +1,10 @@
 import questionary
 
 
-def demander_selection(message, choix, valider=None):
+def demander_choix(message, entrees, valider=None):
+    choix = [
+        questionary.Choice(titre, value=valeur) for titre, valeur in entrees
+    ]
     if valider is None:
         return questionary.select(message, choices=choix).unsafe_ask()
     return questionary.checkbox(

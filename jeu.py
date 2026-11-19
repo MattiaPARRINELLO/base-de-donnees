@@ -1,7 +1,5 @@
 import random
 
-import questionary
-
 import affichage
 import bdd
 import catalogue
@@ -36,11 +34,8 @@ def options_menu():
 
 def demander_choix_menu():
     options = options_menu()
-    choix = [
-        questionary.Choice(option["nom"], value=numero)
-        for numero, option in options.items()
-    ]
-    return saisie.demander_selection("Ton choix : ", choix)
+    entrees = [(option["nom"], numero) for numero, option in options.items()]
+    return saisie.demander_choix("Ton choix : ", entrees)
 
 
 def compter_vaincus(liste_opposants):
@@ -52,18 +47,10 @@ def compter_vaincus(liste_opposants):
 
 
 def tirer_opposants():
-    cles = list(catalogue.opposants.keys())
-    random.shuffle(cles)
-    liste = []
-    for cle in cles[:NOMBRE_OPPOSANTS]:
-        # même raison que pour l'équipe : on copie pour ne pas
-        # abîmer les opposants du catalogue
-        liste.append(
-            dict(
-                catalogue.opposants[cle], hp_max=catalogue.opposants[cle]["hp"]
-            )
-        )
-    return liste
+    tirage = random.sample(
+        list(catalogue.opposants.values()), NOMBRE_OPPOSANTS
+    )
+    return [catalogue.copier_combattant(opposant) for opposant in tirage]
 
 
 def equipe_complete(equipe):
@@ -79,17 +66,13 @@ def valider_equipe(equipe):
 
 
 def creer_equipe():
-    choix = [
-        questionary.Choice(affichage.formater_perso(perso), value=perso)
-        for perso in catalogue.persos.values()
-    ]
-    equipe = saisie.demander_selection(
+    equipe = saisie.demander_choix(
         f"Choisis tes {TAILLE_EQUIPE} personnages : ",
-        choix,
+        affichage.choix_persos(),
         valider_equipe,
     )
     # copie pour chaque perso : sinon leurs HP baissent dans le catalogue
-    return [dict(perso, hp_max=perso["hp"]) for perso in equipe]
+    return [catalogue.copier_combattant(perso) for perso in equipe]
 
 
 def demarrer_partie():

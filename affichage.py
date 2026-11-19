@@ -5,7 +5,7 @@ from rich.table import Table
 
 import bdd
 import catalogue
-from constantes import NOMBRE_SCORES_AFFICHES
+from constantes import AUCUN_SCORE, NOMBRE_SCORES_AFFICHES
 from predicats import est_vivant
 
 console = Console()
@@ -16,6 +16,12 @@ def formater_perso(perso):
         f"{perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} "
         f"DEF: {perso['defense']} ARME: {perso['arme']}"
     )
+
+
+def choix_persos():
+    return [
+        (formater_perso(perso), perso) for perso in catalogue.persos.values()
+    ]
 
 
 def afficher_affrontement(perso, opposant):
@@ -42,7 +48,7 @@ def afficher_personnages():
 def afficher_scores():
     scores = bdd.lire_scores(NOMBRE_SCORES_AFFICHES)
     if len(scores) == 0:
-        print("Aucun score enregistré")
+        print(AUCUN_SCORE)
         return
     index = 1
     for score in scores:
@@ -61,7 +67,7 @@ def afficher_score(score, index):
 def afficher_meilleur_score():
     score = bdd.lire_meilleur_score()
     if score is None:
-        print("Aucun score enregistré")
+        print(AUCUN_SCORE)
         return
     print(f"Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
 
@@ -76,15 +82,16 @@ def afficher_round(perso, opposant, degats_perso, degats_opposant):
 
 
 def afficher_echange(perso, opposant, degats_perso, degats_opposant):
-    console.print(
-        f"[italic]{perso['nom']} frappe avec {perso['arme']} "
-        f"et inflige {degats_perso} dégâts[/]"
-    )
+    afficher_coup(perso, degats_perso)
     if degats_opposant > 0:
-        console.print(
-            f"[italic]{opposant['nom']} riposte avec {opposant['arme']} "
-            f"et inflige {degats_opposant} dégâts[/]"
-        )
+        afficher_coup(opposant, degats_opposant)
+
+
+def afficher_coup(attaquant, degats):
+    console.print(
+        f"[italic]{attaquant['nom']} frappe avec {attaquant['arme']} "
+        f"et inflige {degats} dégâts[/]"
+    )
 
 
 def construire_table_round(perso, opposant, degats_perso, degats_opposant):

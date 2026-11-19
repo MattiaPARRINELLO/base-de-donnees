@@ -143,3 +143,7 @@ opposants = {
         "arme": "un argumentaire agressif",
     },
 }
+
+
+def copier_combattant(combattant):
+    return dict(combattant, hp_max=combattant["hp"])
