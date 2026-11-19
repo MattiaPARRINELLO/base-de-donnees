@@ -6,6 +6,8 @@ Les scores sont enregistrés dans MongoDB via le module bdd.
 import math
 import random
 
+import questionary
+
 import bdd
 
 persos = {
@@ -88,8 +90,11 @@ def lancer_jeu():
 
 def demander_choix_menu():
     options = options_menu()
-    afficher_options_menu(options)
-    return demander_choix(len(options), "Ton choix : ")
+    choix = [
+        questionary.Choice(option["nom"], value=numero)
+        for numero, option in options.items()
+    ]
+    return questionary.select("Ton choix : ", choices=choix).unsafe_ask()
 
 
 def afficher_personnages():
@@ -103,28 +108,6 @@ def options_menu():
         3: {"nom": "Voir les scores", "action": afficher_scores},
         4: {"nom": "Quitter", "action": None},
     }
-
-
-def afficher_options_menu(options):
-    for numero, option in options.items():
-        print(f"{numero}. {option['nom']}")
-
-
-def choix_valide(choix, minimum, maximum):
-    if not choix.isdigit():
-        return False
-    choix = int(choix)
-    if minimum > choix or choix > maximum:  # noqa: SIM103
-        return False
-    return True
-
-
-def demander_choix(nombre_options, message):
-    while True:
-        choix = input(message)
-        if choix_valide(choix, 1, nombre_options):
-            return int(choix)
-        print("Choix invalide")
 
 
 def compter_vaincus(liste_opposants):
@@ -150,11 +133,11 @@ def demarrer_partie():
 
 
 def demander_pseudo():
-    while True:
-        pseudo = input("Entre ton pseudo : ").strip()
-        if pseudo_valide(pseudo):
-            return pseudo
-        print("Pseudo non valide")
+    return (
+        questionary.text("Entre ton pseudo : ", validate=pseudo_valide)
+        .unsafe_ask()
+        .strip()
+    )
 
 
 def pseudo_valide(pseudo):
@@ -181,10 +164,11 @@ def equipe_complete(equipe):
 
 def demander_perso(equipe):
     liste = persos_disponibles(equipe)
-    afficher_liste_persos(liste)
-    choix = demander_choix(len(liste), "Choix du personnage : ")
-    # copie du perso : sinon ses HP baissent dans le catalogue et il revient blessé à la partie suivante
-    return dict(liste[choix - 1])
+    choix = [questionary.Choice(formater_perso(perso), value=perso) for perso in liste]
+    perso = questionary.select("Choix du personage : ", choices=choix).unsafe_ask()
+    # copie du perso : sinon ses HP baissent dans le catalogue
+    # et il revient blessé à la partie suivante
+    return dict(perso)
 
 
 def persos_disponibles(a_tronquer):
@@ -205,10 +189,12 @@ def afficher_liste_persos(liste):
         index += 1
 
 
+def formater_perso(perso):
+    return f"{perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}"
+
+
 def afficher_perso_formate(perso, index):
-    print(
-        f"{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}"
-    )
+    print(f"{index}. {formater_perso(perso)}")
 
 
 def afficher_scores():
@@ -311,4 +297,7 @@ def tous_vaincus(restants):
 
 
 if __name__ == "__main__":
-    lancer_jeu()
+    try:
+        lancer_jeu()
+    except KeyboardInterrupt:
+        print("À bientôt")
