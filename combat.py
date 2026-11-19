@@ -15,14 +15,6 @@ def calculer_degats(attaquant, defenseur):
     return degats
 
 
-def combat_en_cours(persos_restants, opposants_restants):
-    if tous_vaincus(persos_restants):
-        return False
-    if tous_vaincus(opposants_restants):
-        return False
-    return True
-
-
 def attaquer(attaquant, defenseur):
     degats = calculer_degats(attaquant, defenseur)
     defenseur["hp"] -= degats
@@ -59,6 +51,14 @@ def tour_de_combat(persos_restants, opposants_restants):
         opposants_restants.pop(0)
     else:
         persos_restants.pop(0)
+
+
+def combat_en_cours(persos_restants, opposants_restants):
+    if tous_vaincus(persos_restants):
+        return False
+    if tous_vaincus(opposants_restants):
+        return False
+    return True
 
 
 def combattre(equipe, liste_opposants):

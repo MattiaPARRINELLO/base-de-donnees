@@ -18,18 +18,6 @@ def formater_perso(perso):
     )
 
 
-def choix_persos():
-    return [
-        (formater_perso(perso), perso) for perso in catalogue.persos.values()
-    ]
-
-
-def afficher_affrontement(perso, opposant):
-    console.print(
-        f"[bold]{perso['nom']}[/] affronte [bold]{opposant['nom']}[/]"
-    )
-
-
 def afficher_perso_formate(perso, index):
     print(f"{index}. {formater_perso(perso)}")
 
@@ -41,8 +29,22 @@ def afficher_liste_persos(liste):
         index += 1
 
 
+def choix_persos():
+    return [
+        (formater_perso(perso), perso) for perso in catalogue.persos.values()
+    ]
+
+
 def afficher_personnages():
     afficher_liste_persos(catalogue.persos.values())
+
+
+def afficher_score(score, index):
+    print(
+        f"{index}. {score['pseudo']} - "
+        f"{score['opposants_vaincus']} vaincus - "
+        f"{score['date_partie']:%d/%m/%Y %H:%M:%S}"
+    )
 
 
 def afficher_scores():
@@ -56,14 +58,6 @@ def afficher_scores():
         index += 1
 
 
-def afficher_score(score, index):
-    print(
-        f"{index}. {score['pseudo']} - "
-        f"{score['opposants_vaincus']} vaincus - "
-        f"{score['date_partie']:%d/%m/%Y %H:%M:%S}"
-    )
-
-
 def afficher_meilleur_score():
     score = bdd.lire_meilleur_score()
     if score is None:
@@ -72,13 +66,11 @@ def afficher_meilleur_score():
     print(f"Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
 
 
-def afficher_round(perso, opposant, degats_perso, degats_opposant):
-    afficher_echange(perso, opposant, degats_perso, degats_opposant)
-    table = construire_table_round(
-        perso, opposant, degats_perso, degats_opposant
+def afficher_coup(attaquant, degats):
+    console.print(
+        f"[italic]{attaquant['nom']} frappe avec {attaquant['arme']} "
+        f"et inflige {degats} dégâts[/]"
     )
-    console.print(Panel(table))
-    afficher_vaincus(perso, opposant)
 
 
 def afficher_echange(perso, opposant, degats_perso, degats_opposant):
@@ -87,10 +79,20 @@ def afficher_echange(perso, opposant, degats_perso, degats_opposant):
         afficher_coup(opposant, degats_opposant)
 
 
-def afficher_coup(attaquant, degats):
-    console.print(
-        f"[italic]{attaquant['nom']} frappe avec {attaquant['arme']} "
-        f"et inflige {degats} dégâts[/]"
+def barre_vie(combattant):
+    return ProgressBar(
+        total=combattant["hp_max"],
+        completed=max(combattant["hp"], 0),
+        width=20,
+    )
+
+
+def ajouter_ligne(table, combattant, degats):
+    table.add_row(
+        combattant["nom"],
+        str(degats),
+        f"{max(combattant['hp'], 0)}/{combattant['hp_max']}",
+        barre_vie(combattant),
     )
 
 
@@ -105,28 +107,26 @@ def construire_table_round(perso, opposant, degats_perso, degats_opposant):
     return table
 
 
-def ajouter_ligne(table, combattant, degats):
-    table.add_row(
-        combattant["nom"],
-        str(degats),
-        f"{max(combattant['hp'], 0)}/{combattant['hp_max']}",
-        barre_vie(combattant),
-    )
-
-
-def barre_vie(combattant):
-    return ProgressBar(
-        total=combattant["hp_max"],
-        completed=max(combattant["hp"], 0),
-        width=20,
-    )
-
-
 def afficher_vaincus(perso, opposant):
     if not est_vivant(opposant):
         console.print(f"[bold red]{opposant['nom']} est vaincu[/]")
     if not est_vivant(perso):
         console.print(f"[bold red]{perso['nom']} est vaincu[/]")
+
+
+def afficher_affrontement(perso, opposant):
+    console.print(
+        f"[bold]{perso['nom']}[/] affronte [bold]{opposant['nom']}[/]"
+    )
+
+
+def afficher_round(perso, opposant, degats_perso, degats_opposant):
+    afficher_echange(perso, opposant, degats_perso, degats_opposant)
+    table = construire_table_round(
+        perso, opposant, degats_perso, degats_opposant
+    )
+    console.print(Panel(table))
+    afficher_vaincus(perso, opposant)
 
 
 def afficher_resultat(victoire):
