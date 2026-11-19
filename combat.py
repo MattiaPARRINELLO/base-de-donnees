@@ -3,6 +3,7 @@ import time
 
 import affichage
 from constantes import PAUSE_ROUND
+from predicats import est_vivant, tous_vaincus
 
 
 def calculer_degats(attaquant, defenseur):
@@ -12,18 +13,6 @@ def calculer_degats(attaquant, defenseur):
     if degats < 1:
         return 1
     return degats
-
-
-def est_vivant(perso):
-    if perso["hp"] <= 0:
-        return False
-    return True
-
-
-def tous_vaincus(restants):
-    if len(restants) > 0:
-        return False
-    return True
 
 
 def combat_en_cours(persos_restants, opposants_restants):

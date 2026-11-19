@@ -1,11 +1,12 @@
-from math import comb
 import random
+
 import questionary
 
 import affichage
 import bdd
 import catalogue
 import combat
+import predicats
 import saisie
 from constantes import NOMBRE_OPPOSANTS, TAILLE_EQUIPE
 
@@ -45,7 +46,7 @@ def demander_choix_menu():
 def compter_vaincus(liste_opposants):
     vaincus = 0
     for opposant in liste_opposants:
-        if not combat.est_vivant(opposant):
+        if not predicats.est_vivant(opposant):
             vaincus += 1
     return vaincus
 

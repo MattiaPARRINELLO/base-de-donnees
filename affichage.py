@@ -6,6 +6,7 @@ from rich.table import Table
 import bdd
 import catalogue
 from constantes import NOMBRE_SCORES_AFFICHES
+from predicats import est_vivant
 
 console = Console()
 
@@ -35,7 +36,7 @@ def afficher_liste_persos(liste):
 
 
 def afficher_personnages():
-    afficher_liste_persos(persos.values())
+    afficher_liste_persos(catalogue.persos.values())
 
 
 def afficher_scores():
