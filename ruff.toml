@@ -1,0 +1,6 @@
+line-length = 79
+
+[lint]
+# La consigne de style impose des gardes du type « si ... retourner faux ».
+# SIM103 veut les remplacer par un return direct, d'où cette exception.
+ignore = ["SIM103"]
