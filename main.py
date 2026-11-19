@@ -165,6 +165,7 @@ opposants = {
 
 
 TAILLE_EQUIPE = 3
+NOMBRE_OPPOSANTS = 4
 NOMBRE_SCORES_AFFICHES = 10
 PAUSE_ROUND = 0.8
 
@@ -368,7 +369,7 @@ def tirer_opposants():
     cles = list(opposants.keys())
     random.shuffle(cles)
     liste = []
-    for cle in cles:
+    for cle in cles[:NOMBRE_OPPOSANTS]:
         # même raison que pour l'équipe : on copie pour ne pas
         # abîmer les opposants du catalogue
         liste.append(dict(opposants[cle], hp_max=opposants[cle]["hp"]))
