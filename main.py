@@ -75,19 +75,6 @@ TAILLE_EQUIPE = 3
 NOMBRE_SCORES_AFFICHES = 10
 
 
-"""
-fonction lancer_jeu():
-    initialiser base
-    tant que vrai:
-        afficher le meilleur score
-        choix = demander_choix_menu()
-        action = options du menu[choix]['action']
-        si action est nulle:
-            retourner
-        action()
-"""
-
-
 def lancer_jeu():
     bdd.initialiser_base()
     while True:
@@ -99,34 +86,14 @@ def lancer_jeu():
         action()
 
 
-"""
-fonction demander_choix_menu():
-    options = options_menu()
-    afficher_options_menu(options)
-    retourner demander_choix(longueur(options), "Ton choix : ")
-"""
-
-
 def demander_choix_menu():
     options = options_menu()
     afficher_options_menu(options)
     return demander_choix(len(options), "Ton choix : ")
 
 
-"""
-fonction afficher_personnages():
-    afficher la liste de tous les personnages disponibles
-"""
-
-
 def afficher_personnages():
     afficher_liste_persos(persos_disponibles([]))
-
-
-"""
-fonction options_menu():
-    retourner dict options, numéro -> nom & action
-"""
 
 
 def options_menu():
@@ -138,27 +105,9 @@ def options_menu():
     }
 
 
-"""
-fonction afficher_options_menu(options):
-    pour chaque numero, option dans options:
-        afficher(numero, ".", option['nom'])
-"""
-
-
 def afficher_options_menu(options):
     for numero, option in options.items():
         print(f"{numero}. {option['nom']}")
-
-
-"""
-fonction choix_valide(choix, minimum, maximum):
-    si choix n'est pas un nombre:
-        retourner faux
-    choix = entier(choix)
-    si minimum > choix ou choix > maximum:
-            retourner faux
-    retourner vrai
-"""
 
 
 def choix_valide(choix, minimum, maximum):
@@ -170,16 +119,6 @@ def choix_valide(choix, minimum, maximum):
     return True
 
 
-"""
-fonction demander_choix(nombre_options, message):
-    tant que vrai:
-        choix = entree(message)
-        si choix_valide(choix, 1, nombre_options):
-            retourner entier(choix)
-        afficher("Choix invalide")
-"""
-
-
 def demander_choix(nombre_options, message):
     while True:
         choix = input(message)
@@ -188,41 +127,12 @@ def demander_choix(nombre_options, message):
         print("Choix invalide")
 
 
-"""
-fonction compter_vaincus(liste_opposants):
-    vaincus = 0
-    pour chaque opposant dans liste_opposants:
-        si opposant['hp'] <= 0:
-            vaincus += 1
-    retourner vaincus
-"""
-
-
 def compter_vaincus(liste_opposants):
     vaincus = 0
     for opposant in liste_opposants:
         if not est_vivant(opposant):
             vaincus += 1
     return vaincus
-
-
-"""
-fonction demarrer_partie():
-    pseudo = demander_pseudo()
-    equipe = creer_equipe()
-    liste_opposants = tirer_opposant()
-    victoire = combattre(equipe, liste_opposants) 
-    si victoire:
-        afficher("Victoire")
-    sinon: 
-        afficher("Défaite")
-    vaincus = 0
-    pour chaque opposant dans liste_opposants:
-        si opposant['hp'] <= 0:
-            vaincus += 1
-    enregistrer score dans la base de données
-    afficher(f"Score enregistré : {vaincus} opposant(s) vaincu(s)")
-"""
 
 
 def demarrer_partie():
@@ -239,32 +149,12 @@ def demarrer_partie():
     print(f"Score enregistré : {vaincus} opposant(s) vaincu(s)")
 
 
-"""
-fonction demander_pseudo():
-    tant que vrai:
-        pseudo = entrée("Entre ton pseudo :")
-        si pseudo_valide(pseudo):
-            retourner pseudo
-        afficher("Pseudo non valide")
-"""
-
-
 def demander_pseudo():
     while True:
         pseudo = input("Entre ton pseudo : ").strip()
         if pseudo_valide(pseudo):
             return pseudo
         print("Pseudo non valide")
-
-
-"""
-fonction pseudo_valide(pseudo):
-    si longueur(pseudo) > 40 ou longueur(pseudo) < 3:
-        retourner faux
-    
-    sinon:
-        retourner vrai
-"""
 
 
 def pseudo_valide(pseudo):
@@ -276,27 +166,11 @@ def pseudo_valide(pseudo):
         return True
 
 
-"""
-fonction creer_equipe():
-    equipe = []
-    while equipe_complete(equipe):
-        equipe.ajouter(demander_perso(equipe))
-"""
-
-
 def creer_equipe():
     equipe = []
     while not equipe_complete(equipe):
         equipe.append(demander_perso(equipe))
     return equipe
-
-
-"""
-fonction equipe_complete(equipe):
-    si longueur equipe >= TAILLE EQUIPE:
-        return True
-    return False
-"""
 
 
 def equipe_complete(equipe):
@@ -305,31 +179,12 @@ def equipe_complete(equipe):
     return False
 
 
-"""
-fonction demander_perso(equipe):
-    liste = persos_disponibles(equipe)
-    afficher_liste_persos(liste)
-    choix = demander_choix(longueur(liste), "Choix du personnage : ")
-    retourner liste[choix - 1]
-"""
-
-
 def demander_perso(equipe):
     liste = persos_disponibles(equipe)
     afficher_liste_persos(liste)
     choix = demander_choix(len(liste), "Choix du personnage : ")
     # copie du perso : sinon ses HP baissent dans le catalogue et il revient blessé à la partie suivante
     return dict(liste[choix - 1])
-
-
-"""
-fonction persos_disponibles(a_tronquer):
-    liste = []
-    pour chaque persos en tant que perso:
-        si perso['nom'] pas dans les noms de a_tronquer:
-            liste.ajouter(perso)
-    retourner liste
-"""
 
 
 def persos_disponibles(a_tronquer):
@@ -343,15 +198,6 @@ def persos_disponibles(a_tronquer):
     return liste
 
 
-"""
-fonction afficher_liste_persos(liste):
-    index = 1
-    pour chaque perso dans liste:
-        afficher_perso_formate(perso, index)
-        index += 1 
-"""
-
-
 def afficher_liste_persos(liste):
     index = 1
     for perso in liste:
@@ -359,29 +205,10 @@ def afficher_liste_persos(liste):
         index += 1
 
 
-"""
-fonction afficher_perso_formate(perso, index):
-    afficher("{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}")
-"""
-
-
 def afficher_perso_formate(perso, index):
     print(
         f"{index}. {perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}"
     )
-
-
-"""
-fonction afficher_scores():
-    scores = lire_scores(NOMBRE_SCORES_AFFICHES)
-    si longueur(scores) == 0:
-        afficher("Aucun score enregistré")
-        retourner
-    index = 1
-    pour chaque score dans scores:
-        afficher(f"{index}. {score['pseudo']} - {score['opposants_vaincus']} vaincus - {score['date_partie']}")
-        index += 1
-"""
 
 
 def afficher_scores():
@@ -397,33 +224,12 @@ def afficher_scores():
         index += 1
 
 
-"""
-fonction afficher_meilleur_score():
-    score = lire_meilleur_score()
-    si score est nul:
-        afficher("Aucun score enregistré")
-        retourner
-    afficher("Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
-"""
-
-
 def afficher_meilleur_score():
     score = bdd.lire_meilleur_score()
     if score is None:
         print("Aucun score enregistré")
         return
     print(f"Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
-
-
-"""
-fonction tirer_opposant():
-    cles = liste des clé de opposants
-    mélanger(cles)
-    liste = []
-    pour chaque cle dans cles:
-        liste.ajouter(copier(opposants[cle]))
-    retourner liste
-"""
 
 
 def tirer_opposant():
@@ -434,18 +240,6 @@ def tirer_opposant():
         # même raison que pour l'équipe : on copie pour ne pas abîmer les opposants du catalogue
         liste.append(dict(opposants[cle]))
     return liste
-
-
-"""
-fonction combattre(equipe, liste_opposants):
-    persos_restants = copie de equipe
-    opposants_restants = copie de liste_opposants
-    tant combat_en_cours(persos_restants, opposants_restants):
-        tour_de_combat(persos_restant, opposants_restants)
-    si opposant_restant est vide:
-        retourner vrai
-    retourner faux
-"""
 
 
 def combattre(equipe, liste_opposants):
@@ -460,34 +254,12 @@ def combattre(equipe, liste_opposants):
     return False
 
 
-"""
-fonction combat_en_cours(persos_restants, opposants_restants):
-    si persos_restants est vide:
-        retourner faux
-    si opposants_restants est vide:
-        retourner faux
-    retourner vrai
-"""
-
-
 def combat_en_cours(persos_restants, opposants_restants):
     if tous_vaincus(persos_restants):
         return False
     if tous_vaincus(opposants_restants):  # noqa: SIM103
         return False
     return True
-
-
-"""
-fonction tour_de_combat(persos_restants, opposants_restants):
-    perso = persos_restants[0]
-    opposant = opposant_restants[0]
-    afficher(perso['nom'], affronte, opposant['nom'])
-    si duel(perso, opposant):
-        retirer le premier de opposant_restants
-    sinon
-        retirer le premier de persos_restants
-"""
 
 
 def tour_de_combat(persos_restants, opposants_restants):
@@ -502,32 +274,10 @@ def tour_de_combat(persos_restants, opposants_restants):
         persos_restants.pop(0)
 
 
-"""
-fonction attaquer(attaquant, defenseur):
-    defenseur['hp'] =  defenseur['hp'] - calculer_degats(attaquant, defenseur)
-    si le defenseur n'est pas vivant:
-        afficher(defenseur['nom'], "est vaincu")
-"""
-
-
 def attaquer(attaquant, defenseur):
     defenseur["hp"] -= calculer_degats(attaquant, defenseur)
     if not est_vivant(defenseur):
         print(f"{defenseur['nom']} est vaincu")
-
-
-"""
-fonction duel(perso, opposant):
-    tant que perso['hp'] > 0 et opposant['hp'] > 0:
-        opposant['hp'] = opposant['hp'] - calculer_degats(perso, opposant)
-        si opposant['hp'] <= 0:
-            afficher(opposant['nom'], "est vaincu")
-        sinon:
-            perso['hp'] = perso['hp'] - calculer_degats(opposant, perso)
-            si perso['hp'] <= 0:
-                afficher(perso['nom'], "est vaincu")
-    retourner perso['hp'] > 0
-"""
 
 
 def duel(perso, opposant):
@@ -539,15 +289,6 @@ def duel(perso, opposant):
     return est_vivant(perso)
 
 
-"""
-fonction calculer_degats(attaquant, defenseur):
-    degats = arrondi_inferieur(attaquant['attaque'] - (defenseur['defense'] / 2)) #Limite combat trop long ex. Gérard x Jo (130 tours sans)
-    si degats < 1:
-        retourner 1
-    retourner degats    
-"""
-
-
 def calculer_degats(attaquant, defenseur):
     degats = math.floor(
         attaquant["attaque"] - defenseur["defense"] / 2
@@ -557,26 +298,10 @@ def calculer_degats(attaquant, defenseur):
     return degats
 
 
-"""
-fonction est_vivant(perso):
-    si perso['hp'] > 0:
-        retourner Vrai 
-    retourner Faux
-"""
-
-
 def est_vivant(perso):
     if perso["hp"] > 0:  # noqa: SIM103
         return True
     return False
-
-
-"""
-fonction tous_vaincus(restants):
-    si longueur restants == 0:
-        retourner Vrai
-    retourner Faux
-"""
 
 
 def tous_vaincus(restants):
