@@ -94,7 +94,15 @@ def demander_choix_menu():
         questionary.Choice(option["nom"], value=numero)
         for numero, option in options.items()
     ]
-    return questionary.select("Ton choix : ", choices=choix).unsafe_ask()
+    return demander_selection("Ton choix : ", choix)
+
+
+def demander_selection(message, choix, valider=None):
+    if valider is None:
+        return questionary.select(message, choices=choix).unsafe_ask()
+    return questionary.checkbox(
+        message, choices=choix, validate=valider
+    ).unsafe_ask()
 
 
 def afficher_personnages():
@@ -121,7 +129,7 @@ def compter_vaincus(liste_opposants):
 def demarrer_partie():
     pseudo = demander_pseudo()
     equipe = creer_equipe()
-    liste_opposants = tirer_opposant()
+    liste_opposants = tirer_opposants()
     victoire = combattre(equipe, liste_opposants)
     if victoire:
         print("Victoire")
@@ -141,6 +149,7 @@ def demander_pseudo():
 
 
 def pseudo_valide(pseudo):
+    pseudo = pseudo.strip()  # on retire les espaces
     if len(pseudo) > 40:
         return False
     if len(pseudo) < 3:
@@ -148,24 +157,30 @@ def pseudo_valide(pseudo):
     return True
 
 
-def equipe_valide(equipe):
-    if len(equipe) == TAILLE_EQUIPE:
+def equipe_complete(equipe):
+    if len(equipe) != TAILLE_EQUIPE:
+        return False
+    return True
+
+
+def valider_equipe(equipe):
+    if equipe_complete(equipe):
         return True
     return f"Choisis exactement {TAILLE_EQUIPE} personnages"
 
 
 def creer_equipe():
-    choix = questionary.checkbox(
-        "Choisis tes 3 personnages : ",
-        choices=[
-            questionary.Choice(formater_perso(perso), value=perso)
-            for perso in persos.values()
-        ],
-        validate=equipe_valide,
-        instruction="(espace pour cocher, entrée pour valider)",
-    ).unsafe_ask()
+    choix = [
+        questionary.Choice(formater_perso(perso), value=perso)
+        for perso in persos.values()
+    ]
+    equipe = demander_selection(
+        f"Choisis tes {TAILLE_EQUIPE} personnages : ",
+        choix,
+        valider_equipe,
+    )
     # copie pour chaque perso : sinon leurs HP baissent dans le catalogue
-    return [dict(perso) for perso in choix]
+    return [dict(perso) for perso in equipe]
 
 
 def afficher_liste_persos(liste):
@@ -209,7 +224,7 @@ def afficher_meilleur_score():
     print(f"Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
 
 
-def tirer_opposant():
+def tirer_opposants():
     cles = list(opposants.keys())
     random.shuffle(cles)
     liste = []
