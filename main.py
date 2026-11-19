@@ -98,7 +98,7 @@ def demander_choix_menu():
 
 
 def afficher_personnages():
-    afficher_liste_persos(persos_disponibles([]))
+    afficher_liste_persos(persos.values())
 
 
 def options_menu():
@@ -143,43 +143,29 @@ def demander_pseudo():
 def pseudo_valide(pseudo):
     if len(pseudo) > 40:
         return False
-    if len(pseudo) < 3:  # noqa: SIM103
+    if len(pseudo) < 3:
         return False
-    else:
+    return True
+
+
+def equipe_valide(equipe):
+    if len(equipe) == TAILLE_EQUIPE:
         return True
+    return f"Choisis exactement {TAILLE_EQUIPE} personnages"
 
 
 def creer_equipe():
-    equipe = []
-    while not equipe_complete(equipe):
-        equipe.append(demander_perso(equipe))
-    return equipe
-
-
-def equipe_complete(equipe):
-    if len(equipe) >= TAILLE_EQUIPE:  # noqa: SIM103
-        return True
-    return False
-
-
-def demander_perso(equipe):
-    liste = persos_disponibles(equipe)
-    choix = [questionary.Choice(formater_perso(perso), value=perso) for perso in liste]
-    perso = questionary.select("Choix du personage : ", choices=choix).unsafe_ask()
-    # copie du perso : sinon ses HP baissent dans le catalogue
-    # et il revient blessé à la partie suivante
-    return dict(perso)
-
-
-def persos_disponibles(a_tronquer):
-    nom_pris = []
-    for perso in a_tronquer:
-        nom_pris.append(perso["nom"])
-    liste = []
-    for perso in persos.values():
-        if perso["nom"] not in nom_pris:
-            liste.append(perso)
-    return liste
+    choix = questionary.checkbox(
+        "Choisis tes 3 personnages : ",
+        choices=[
+            questionary.Choice(formater_perso(perso), value=perso)
+            for perso in persos.values()
+        ],
+        validate=equipe_valide,
+        instruction="(espace pour cocher, entrée pour valider)",
+    ).unsafe_ask()
+    # copie pour chaque perso : sinon leurs HP baissent dans le catalogue
+    return [dict(perso) for perso in choix]
 
 
 def afficher_liste_persos(liste):
@@ -190,7 +176,10 @@ def afficher_liste_persos(liste):
 
 
 def formater_perso(perso):
-    return f"{perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} DEF: {perso['defense']} ARME: {perso['arme']}"
+    return (
+        f"{perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} "
+        f"DEF: {perso['defense']} ARME: {perso['arme']}"
+    )
 
 
 def afficher_perso_formate(perso, index):
@@ -205,7 +194,9 @@ def afficher_scores():
     index = 1
     for score in scores:
         print(
-            f"{index}. {score['pseudo']} - {score['opposants_vaincus']} vaincus - {score['date_partie']:%d/%m/%Y %H:%M:%S}"
+            f"{index}. {score['pseudo']} - "
+            f"{score['opposants_vaincus']} vaincus - "
+            f"{score['date_partie']:%d/%m/%Y %H:%M:%S}"
         )
         index += 1
 
@@ -223,7 +214,8 @@ def tirer_opposant():
     random.shuffle(cles)
     liste = []
     for cle in cles:
-        # même raison que pour l'équipe : on copie pour ne pas abîmer les opposants du catalogue
+        # même raison que pour l'équipe : on copie pour ne pas
+        # abîmer les opposants du catalogue
         liste.append(dict(opposants[cle]))
     return liste
 
@@ -231,26 +223,26 @@ def tirer_opposant():
 def combattre(equipe, liste_opposants):
     persos_restants = list(equipe)
     opposants_restants = list(liste_opposants)
-    # copie superficielle : la liste est nouvelle mais les dicts sont partagés
-    # donc les HP perdus pendant le combat restent visibles pour compter_vaincus
+    # copie superficielle : la liste est nouvelle mais les dicts sont partagés,
+    # les HP perdus restent donc visibles pour compter_vaincus
     while combat_en_cours(persos_restants, opposants_restants):
         tour_de_combat(persos_restants, opposants_restants)
-    if tous_vaincus(opposants_restants):  # noqa: SIM103
-        return True
-    return False
+    if not tous_vaincus(opposants_restants):
+        return False
+    return True
 
 
 def combat_en_cours(persos_restants, opposants_restants):
     if tous_vaincus(persos_restants):
         return False
-    if tous_vaincus(opposants_restants):  # noqa: SIM103
+    if tous_vaincus(opposants_restants):
         return False
     return True
 
 
 def tour_de_combat(persos_restants, opposants_restants):
-    # le gagnant du duel reste en tête avec ses HP, le perdant sort de sa file :
-    # on affronte donc les opposants un par un, dans l'ordre
+    # le gagnant du duel reste en tête avec ses HP, le perdant
+    # sort de sa file : on affronte les opposants un par un
     perso = persos_restants[0]
     opposant = opposants_restants[0]
     print(f"{perso['nom']} affronte {opposant['nom']}")
@@ -267,7 +259,8 @@ def attaquer(attaquant, defenseur):
 
 
 def duel(perso, opposant):
-    # le perso frappe en premier, l'opposant ne riposte que s'il est encore vivant
+    # le perso frappe en premier, l'opposant ne riposte
+    # que s'il est encore vivant
     while est_vivant(perso) and est_vivant(opposant):
         attaquer(perso, opposant)
         if est_vivant(opposant):
@@ -285,15 +278,15 @@ def calculer_degats(attaquant, defenseur):
 
 
 def est_vivant(perso):
-    if perso["hp"] > 0:  # noqa: SIM103
-        return True
-    return False
+    if perso["hp"] <= 0:
+        return False
+    return True
 
 
 def tous_vaincus(restants):
-    if len(restants) == 0:  # noqa: SIM103
-        return True
-    return False
+    if len(restants) > 0:
+        return False
+    return True
 
 
 if __name__ == "__main__":
