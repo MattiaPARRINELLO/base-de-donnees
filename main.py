@@ -5,10 +5,17 @@ Les scores sont enregistrés dans MongoDB via le module bdd.
 
 import math
 import random
+import time
 
 import questionary
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress_bar import ProgressBar
+from rich.table import Table
 
 import bdd
+
+console = Console()
 
 persos = {
     "gerard": {
@@ -75,6 +82,7 @@ opposants = {
 
 TAILLE_EQUIPE = 3
 NOMBRE_SCORES_AFFICHES = 10
+PAUSE_ROUND = 0.8
 
 
 def lancer_jeu():
@@ -188,7 +196,7 @@ def creer_equipe():
         valider_equipe,
     )
     # copie pour chaque perso : sinon leurs HP baissent dans le catalogue
-    return [dict(perso) for perso in equipe]
+    return [dict(perso, hp_max=perso["hp"]) for perso in equipe]
 
 
 def afficher_liste_persos(liste):
@@ -232,6 +240,46 @@ def afficher_meilleur_score():
     print(f"Record : {score['pseudo']} - {score['opposants_vaincus']} vaincus")
 
 
+def afficher_affrontement(perso, opposant):
+    console.print(
+        f"[bold]{perso['nom']}[/] affronte [bold]{opposant['nom']}[/]"
+    )
+
+
+def afficher_round(perso, opposant, degats_perso, degats_opposant):
+    table = Table(title="Round", title_justify="left")
+    table.add_column("Combattant")
+    table.add_column("Dégâts", justify="right")
+    table.add_column("HP", justify="right")
+    table.add_column("Vie", width=22)
+    combattants = ((perso, degats_perso), (opposant, degats_opposant))
+    for combattant, degats in combattants:
+        table.add_row(
+            combattant["nom"],
+            str(degats),
+            f"{max(combattant['hp'], 0)}/{combattant['hp_max']}",
+            ProgressBar(
+                total=combattant["hp_max"],
+                completed=max(combattant["hp"], 0),
+                width=20,
+            ),
+        )
+    console.print(
+        f"[italic]{perso['nom']} frappe avec {perso['arme']} "
+        f"et inflige {degats_perso} dégâts[/]"
+    )
+    if degats_opposant > 0:
+        console.print(
+            f"[italic]{opposant['nom']} riposte avec {opposant['arme']} "
+            f"et inflige {degats_opposant} dégâts[/]"
+        )
+    console.print(Panel(table))
+    if not est_vivant(opposant):
+        console.print(f"[bold red]{opposant['nom']} est vaincu[/]")
+    if not est_vivant(perso):
+        console.print(f"[bold red]{perso['nom']} est vaincu[/]")
+
+
 def tirer_opposants():
     cles = list(opposants.keys())
     random.shuffle(cles)
@@ -239,7 +287,7 @@ def tirer_opposants():
     for cle in cles:
         # même raison que pour l'équipe : on copie pour ne pas
         # abîmer les opposants du catalogue
-        liste.append(dict(opposants[cle]))
+        liste.append(dict(opposants[cle], hp_max=opposants[cle]["hp"]))
     return liste
 
 
@@ -268,7 +316,7 @@ def tour_de_combat(persos_restants, opposants_restants):
     # sort de sa file : on affronte les opposants un par un
     perso = persos_restants[0]
     opposant = opposants_restants[0]
-    print(f"{perso['nom']} affronte {opposant['nom']}")
+    afficher_affrontement(perso, opposant)
     if duel(perso, opposant):
         opposants_restants.pop(0)
     else:
@@ -276,18 +324,26 @@ def tour_de_combat(persos_restants, opposants_restants):
 
 
 def attaquer(attaquant, defenseur):
-    defenseur["hp"] -= calculer_degats(attaquant, defenseur)
-    if not est_vivant(defenseur):
-        print(f"{defenseur['nom']} est vaincu")
+    degats = calculer_degats(attaquant, defenseur)
+    defenseur["hp"] -= degats
+    return degats
+
+
+def echanger_coups(perso, opposant):
+    degats_perso = attaquer(perso, opposant)
+    if not est_vivant(opposant):
+        return degats_perso, 0
+    degats_opposant = attaquer(opposant, perso)
+    return degats_perso, degats_opposant
 
 
 def duel(perso, opposant):
     # le perso frappe en premier, l'opposant ne riposte
     # que s'il est encore vivant
     while est_vivant(perso) and est_vivant(opposant):
-        attaquer(perso, opposant)
-        if est_vivant(opposant):
-            attaquer(opposant, perso)
+        degats_perso, degats_opposant = echanger_coups(perso, opposant)
+        afficher_round(perso, opposant, degats_perso, degats_opposant)
+        time.sleep(PAUSE_ROUND)
     return est_vivant(perso)
 
 
