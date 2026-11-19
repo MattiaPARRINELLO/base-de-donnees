@@ -131,10 +131,18 @@ def demarrer_partie():
     equipe = creer_equipe()
     liste_opposants = tirer_opposants()
     victoire = combattre(equipe, liste_opposants)
+    afficher_resultat(victoire)
+    enregistrer_partie(pseudo, victoire, liste_opposants)
+
+
+def afficher_resultat(victoire):
     if victoire:
         print("Victoire")
-    else:
-        print("Défaite")
+        return
+    print("Défaite")
+
+
+def enregistrer_partie(pseudo, victoire, liste_opposants):
     vaincus = compter_vaincus(liste_opposants)
     bdd.enregistrer_score(pseudo, victoire, vaincus)
     print(f"Score enregistré : {vaincus} opposant(s) vaincu(s)")
