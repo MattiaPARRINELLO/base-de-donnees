@@ -318,6 +318,7 @@ def demander_perso(equipe):
     liste = persos_disponibles(equipe)
     afficher_liste_persos(liste)
     choix = demander_choix(len(liste), "Choix du personnage : ")
+    # copie du perso : sinon ses HP baissent dans le catalogue et il revient blessé à la partie suivante
     return dict(liste[choix - 1])
 
 
@@ -430,6 +431,7 @@ def tirer_opposant():
     random.shuffle(cles)
     liste = []
     for cle in cles:
+        # même raison que pour l'équipe : on copie pour ne pas abîmer les opposants du catalogue
         liste.append(dict(opposants[cle]))
     return liste
 
@@ -449,6 +451,8 @@ fonction combattre(equipe, liste_opposants):
 def combattre(equipe, liste_opposants):
     persos_restants = list(equipe)
     opposants_restants = list(liste_opposants)
+    # copie superficielle : la liste est nouvelle mais les dicts sont partagés
+    # donc les HP perdus pendant le combat restent visibles pour compter_vaincus
     while combat_en_cours(persos_restants, opposants_restants):
         tour_de_combat(persos_restants, opposants_restants)
     if tous_vaincus(opposants_restants):  # noqa: SIM103
@@ -487,6 +491,8 @@ fonction tour_de_combat(persos_restants, opposants_restants):
 
 
 def tour_de_combat(persos_restants, opposants_restants):
+    # le gagnant du duel reste en tête avec ses HP, le perdant sort de sa file :
+    # on affronte donc les opposants un par un, dans l'ordre
     perso = persos_restants[0]
     opposant = opposants_restants[0]
     print(f"{perso['nom']} affronte {opposant['nom']}")
@@ -525,6 +531,7 @@ fonction duel(perso, opposant):
 
 
 def duel(perso, opposant):
+    # le perso frappe en premier, l'opposant ne riposte que s'il est encore vivant
     while est_vivant(perso) and est_vivant(opposant):
         attaquer(perso, opposant)
         if est_vivant(opposant):
