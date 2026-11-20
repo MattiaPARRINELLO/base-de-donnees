@@ -46,7 +46,6 @@ def tour_de_combat(persos_restants, opposants_restants):
     # sort de sa file : on affronte les opposants un par un
     perso = persos_restants[0]
     opposant = opposants_restants[0]
-    affichage.afficher_affrontement(perso, opposant)
     if duel(perso, opposant):
         opposants_restants.pop(0)
     else:

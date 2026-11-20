@@ -12,6 +12,7 @@ from constantes import NOMBRE_OPPOSANTS, TAILLE_EQUIPE
 def lancer_jeu():
     bdd.initialiser_base()
     while True:
+        affichage.effacer_ecran()
         affichage.afficher_meilleur_score()
         choix = demander_choix_menu()
         action = options_menu()[choix]["action"]
@@ -76,6 +77,7 @@ def creer_equipe():
 
 
 def demarrer_partie():
+    affichage.effacer_ecran()
     pseudo = saisie.demander_pseudo()
     equipe = creer_equipe()
     liste_opposants = tirer_opposants()

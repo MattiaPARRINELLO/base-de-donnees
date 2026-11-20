@@ -11,6 +11,10 @@ from predicats import est_vivant
 console = Console()
 
 
+def effacer_ecran():
+    console.clear()
+
+
 def formater_perso(perso):
     return (
         f"{perso['nom']} HP: {perso['hp']} ATT: {perso['attaque']} "
@@ -36,6 +40,7 @@ def choix_persos():
 
 
 def afficher_personnages():
+    effacer_ecran()
     afficher_liste_persos(catalogue.persos.values())
 
 
@@ -48,6 +53,7 @@ def afficher_score(score, index):
 
 
 def afficher_scores():
+    effacer_ecran()
     scores = bdd.lire_scores(NOMBRE_SCORES_AFFICHES)
     if len(scores) == 0:
         print(AUCUN_SCORE)
@@ -121,6 +127,8 @@ def afficher_affrontement(perso, opposant):
 
 
 def afficher_round(perso, opposant, degats_perso, degats_opposant):
+    effacer_ecran()
+    afficher_affrontement(perso, opposant)
     afficher_echange(perso, opposant, degats_perso, degats_opposant)
     table = construire_table_round(
         perso, opposant, degats_perso, degats_opposant
